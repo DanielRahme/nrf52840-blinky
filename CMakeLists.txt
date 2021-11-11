@@ -18,9 +18,9 @@ ExternalProject_Add(nrfjprogproj
     URL https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/10-15-0/nrf-command-line-tools-10.15.0_amd.zip
     URL_HASH SHA256=E30B1C94508AFE70EA3AD5EEFB6B9914EE70B9DCE17F14412BCBBB53D1AAD9BD
 
-    CONFIGURE_COMMAND ""
     SOURCE_DIR ${NRFJPROGPROJ_SRC_DIR}
-    BUILD_COMMAND ${CMAKE_COMMAND} -E tar xzvf ${NRFJPROGPROJ_SRC_DIR}/${NRFJPROG_TARBALL}
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} -E tar xzvf ${NRFJPROGPROJ_SRC_DIR}/${NRFJPROG_TARBALL}
+    BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping build step."
     INSTALL_COMMAND cmake -E echo "Skipping install step."
 )
 ExternalProject_Get_Property(nrfjprogproj BINARY_DIR)
@@ -37,4 +37,21 @@ add_dependencies(nrfjprog nrfjprogproj)
 
 
 
-### Download nrf-sdk
+### Nordic Semi SDK
+set(SDK_SRC_DIR ${PROJECT_SOURCE_DIR}/external/nrf5-sdk)
+
+ExternalProject_Add(nordic-sdk-proj
+    URL https://www.nordicsemi.com/-/media/Software-and-other-downloads/SDKs/nRF5/Binaries/nRF5_SDK_17.1.0_ddde560.zip
+    #URL_HASH SHA256=E30B1C94508AFE70EA3AD5EEFB6B9914EE70B9DCE17F14412BCBBB53D1AAD9BD
+
+    CONFIGURE_COMMAND ""
+    SOURCE_DIR ${SDK_SRC_DIR}
+    #BUILD_COMMAND ${CMAKE_COMMAND} -E tar xzvf ${NRFJPROGPROJ_SRC_DIR}/${NRFJPROG_TARBALL}
+    #BUILD_COMMAND ${MAKE}
+    #CONFIGURE_COMMAND ${MAKE}
+    BUILD_COMMAND ${CMAKE_COMMAND} -E echo "Skipping build step."
+    INSTALL_COMMAND cmake -E echo "Skipping install step."
+)
+#ExternalProject_Get_Property(nrfjprogproj BINARY_DIR)
+
+add_subdirectory(external)
