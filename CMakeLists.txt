@@ -55,3 +55,4 @@ ExternalProject_Add(nordic-sdk-proj
 #ExternalProject_Get_Property(nrfjprogproj BINARY_DIR)
 
 add_subdirectory(external)
+add_subdirectory(src)

@@ -1,5 +1,6 @@
-set(SDK_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/nrf5-sdk)
-set(LINKER_SCRIPT ${SDK_ROOT}/examples/peripheral/blinky/pca10056/blank/armgcc/blinky_gcc_nrf52.ld)
+find_file(LINKER_SCRIPT blinky_gcc_nrf52.ld
+    PATHS ${SDK_ROOT}/examples/peripheral/blinky/pca10056/blank/armgcc/
+)
 
 message("Current source dir from /external")
 message(${SDK_ROOT})
@@ -22,7 +23,6 @@ set(SRCS_COMMON
   ${SDK_ROOT}/components/libraries/ringbuf/nrf_ringbuf.c 
   ${SDK_ROOT}/components/libraries/strerror/nrf_strerror.c 
   ${SDK_ROOT}/modules/nrfx/soc/nrfx_atomic.c 
-  #{(PROJ_DI})/main.c 
   ${SDK_ROOT}/modules/nrfx/mdk/system_nrf52840.c 
 )
 
@@ -71,19 +71,20 @@ set(C_FLAGS
 set(LD_FLAGS
     -O3
     -g3
-    -mthumb -mabi=aapcs -L$(SDK_ROOT)/modules/nrfx/mdk -T${LINKER_SCRIPT}
+    -mthumb -mabi=aapcs -L$(SDK_ROOT)/modules/nrfx/mdk 
     #-mcpu=cortex-m4
     #-mfloat-abi=hard -mfpu=fpv4-sp-d16
     -Wl,--gc-sections
     --specs=nano.specs
+    --specs=nosys.specs
 )
 
 
 add_library(nrf52 ${SRCS_COMMON})
 
-target_include_directories(nrf52 PRIVATE ${INCS_COMMON})
-target_link_options(nrf52 PRIVATE ${LD_FLAGS})
-target_link_libraries(nrf52 PRIVATE ${LIBS})
-target_compile_options(nrf52 PRIVATE ${C_FLAGS})
+target_include_directories(nrf52 PUBLIC ${INCS_COMMON})
+target_link_options(nrf52 PUBLIC ${LD_FLAGS})
+#target_link_libraries(nrf52 PRIVATE ${LIBS})
+target_compile_options(nrf52 PUBLIC ${C_FLAGS})
 target_compile_features(nrf52 PRIVATE c_std_99)
 set_target_properties(nrf52 PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
