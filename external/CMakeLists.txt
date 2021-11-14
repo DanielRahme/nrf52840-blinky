@@ -1,3 +1,7 @@
+# CMakeLists.txt for external library
+
+set(SDK_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/nrf5-sdk)
+
 find_file(LINKER_SCRIPT blinky_gcc_nrf52.ld
     PATHS ${SDK_ROOT}/examples/peripheral/blinky/pca10056/blank/armgcc/
 )
