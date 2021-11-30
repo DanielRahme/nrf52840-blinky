@@ -2,12 +2,12 @@
 
 set(SDK_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/nrf5-sdk)
 
-find_file(LINKER_SCRIPT blinky_gcc_nrf52.ld
-    PATHS ${SDK_ROOT}/examples/peripheral/blinky/pca10056/blank/armgcc/
+find_file(LINKER_SCRIPT NAME blinky_gcc_nrf52.ld
+    PATHS ${PROJECT_SOURCE_DIR}/external/nrf5-sdk/examples/peripheral/blinky/pca10056/blank/armgcc/
 )
+message("Linker script at (external)")
+message(${LINKER_SCRIPT})
 
-message("Current source dir from /external")
-message(${SDK_ROOT})
 
 set(SRCS_COMMON
   ${SDK_ROOT}/modules/nrfx/mdk/gcc_startup_nrf52840.S 
@@ -66,21 +66,27 @@ set(C_FLAGS
     -mcpu=cortex-m4
     -mthumb -mabi=aapcs
     -Wall -Werror
-    #-mfloat-abi=hard -mfpu=fpv4-sp-d16
     -ffunction-sections -fdata-sections -fno-strict-aliasing
     -fno-builtin -fshort-enums
+    -D__HEAP_SIZE=8192
+    -D__STACK_SIZE=8192
 )
 
 
 set(LD_FLAGS
     -O3
     -g3
-    -mthumb -mabi=aapcs -L$(SDK_ROOT)/modules/nrfx/mdk 
-    #-mcpu=cortex-m4
-    #-mfloat-abi=hard -mfpu=fpv4-sp-d16
+    -mthumb -mabi=aapcs
+    -T${LINKER_SCRIPT}
+    -L${SDK_ROOT}/modules/nrfx/mdk
     -Wl,--gc-sections
     --specs=nano.specs
-    --specs=nosys.specs
+)
+
+set(LIBS
+    -lm
+    -lc
+    -lnosys
 )
 
 
@@ -88,7 +94,7 @@ add_library(nrf52 ${SRCS_COMMON})
 
 target_include_directories(nrf52 PUBLIC ${INCS_COMMON})
 target_link_options(nrf52 PUBLIC ${LD_FLAGS})
-#target_link_libraries(nrf52 PRIVATE ${LIBS})
+target_link_libraries(nrf52 PRIVATE ${LIBS})
 target_compile_options(nrf52 PUBLIC ${C_FLAGS})
 target_compile_features(nrf52 PRIVATE c_std_99)
 set_target_properties(nrf52 PROPERTIES LINK_DEPENDS ${LINKER_SCRIPT})
